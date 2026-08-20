@@ -8,19 +8,31 @@ int main()
     key_t key;
     int shmid;
     char *str;
+    int i, len;
 
     key = ftok("shmfile", 65);
 
-    shmid = shmget(key, 1024, 0666 | IPC_CREAT);
+    shmid = shmget(key, 1024, 0666);
 
     str = (char *)shmat(shmid, NULL, 0);
 
-    printf("Enter a string: ");
-    fgets(str, 1024, stdin);
+    printf("String received: %s", str);
 
-    printf("String written to shared memory.\n");
+    len = strlen(str);
+
+    printf("Reverse of the string: ");
+
+    for(i = len - 1; i >= 0; i--)
+    {
+        if(str[i] != '\n')
+            printf("%c", str[i]);
+    }
+
+    printf("\n");
 
     shmdt(str);
+
+    shmctl(shmid, IPC_RMID, NULL);
 
     return 0;
 }
